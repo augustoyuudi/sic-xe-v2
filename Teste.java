@@ -6,10 +6,11 @@ public class Teste {
 
 		Code c = new Code();
 		MacroProcessor mc = new MacroProcessor(c.t);
-		
+
 		String ec = mc.processCode();
-		
-		System.out.print(ec);
+
+		Assembler assembler = new Assembler(ec);
+		assembler.assemble();
 	}
-	
+
 }
