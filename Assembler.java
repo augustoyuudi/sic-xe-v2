@@ -10,7 +10,8 @@ public class Assembler {
   private Integer programLength;
   private String code;
 	private String whiteSpaceRegex = "[\\s,]+";
-  private HashMap<String, Byte> OPTAB = new Optab().OPTAB;
+  private HashMap<String, Integer> OPTAB = new Optab().OPTAB;
+  private ArrayList<String> objectProgram = new ArrayList<String>();
 
   public Assembler(String code) {
     this.code = code;
@@ -55,7 +56,7 @@ public class Assembler {
         continue;
       }
 
-      if (words.length == 3 && !words[2].equals("COMMENT")) {
+      if (words.length == 3) {
         String label = words[0];
         if (SYMTAB.containsKey(label)) {
           System.out.println("duplicate symbol");
@@ -122,49 +123,56 @@ public class Assembler {
 
     intermediateFile.add(lines[currentIndex].trim());
     programLength = LOCCTR - startingAddress;
+    // System.out.println(intermediateFile);
   }
 
   private void passTwo() {
     Integer currentIndex = 0;
-    String line = intermediateFile[0];
-    String[] words = line.split(whiteSpaceRegex);
+    String[] words = intermediateFile.get(currentIndex).split(whiteSpaceRegex);
+    String opcode = words[1];
+    String operand;
+    Integer operandAddress = 0;
+    String objectCode;
 
     if (words.length > 2) {
-      opcode = words[1];
-      String operand = words[2];
+      operand = words[2];
 
       if (opcode.equals("START")) {
-        // write listing line
-        // next input line
-      }
+        String programName = String.format("%1$-" + 7 + "s", "H" + words[0]);
 
-      if (!opcode.equals("START")) {
-        // write header record to object program
-        // initialize first text record
+        if (programName.length() > 7) {
+          System.out.println("invalid program name");
+          return;
+        }
+
+        String firstLine = programName + String.format("%06X", startingAddress) + String.format("%06X", programLength);
+        objectProgram.add(firstLine);
+
+        currentIndex += 1;
+        words = intermediateFile.get(currentIndex).split(whiteSpaceRegex);
+        opcode = words[0];
       }
     }
 
-    words = lines[currentIndex].split(whiteSpaceRegex);
-    opcode = words[0];
-
     while (!opcode.equals("END")) {
       if (opcode.charAt(0) == '.') {
-        // write listing line
-        // read next input file
+        currentIndex += 1;
+        words = intermediateFile.get(currentIndex).split(whiteSpaceRegex);
+        opcode = words[0];
         continue;
       }
 
-      if (optab.containsKey(opcode)) {
-        if (words.length == 3 && !words[2].equals("COMMENT")) {
-          // search symbol operand field
-          // search symtab for operand
-          // if found store symbol value as operand address
+      if (OPTAB.containsKey(opcode)) {
+        if (words.length > 2) {
+          operandAddress = SYMTAB.get(opcode);
 
-          // else store 0 as operand address
-          // set error flag (undeifned symbol)
+          if (operandAddress == null) {
+            operandAddress = 0;
+            // set error flag (undeifned symbol)
+          }
         }
-        // store 0 as operand address
-        // assemble the object code instruction
+        Integer temp = OPTAB.get(opcode);
+        objectCode = Integer.toHexString(temp) + String.format("%04d", operandAddress);
       }
 
       if (opcode.equals("BYTE") || opcode.equals("WORD")) {
@@ -175,16 +183,20 @@ public class Assembler {
         // write text record to object program
         // initialize new text record
 
+
       // add object code to text record
-      // write listing line
-      // read next input line
+      operandAddress = SYMTAB.get(opcode);
+      objectCode = OPTAB.get(opcode) + String.format("%04d", operandAddress);
+      objectProgram.add(objectCode);
+      currentIndex += 1;
+      words = intermediateFile.get(currentIndex).split(whiteSpaceRegex);
+      opcode = words[0];
     }
 
+    String endLine = "E" + String.format("%06X", startingAddress);
+    objectProgram.add(endLine);
     // write last text record to object program
-    // write end record to object program
-    // write last listing line
 
-
-    return;
+    System.out.println(objectProgram);
   }
 }
