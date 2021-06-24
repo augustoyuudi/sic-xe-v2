@@ -1,4 +1,4 @@
-
+import java.util.ArrayList;
 
 public class Main {
 
@@ -11,7 +11,7 @@ public class Main {
 		String ec = mc.processCode();
 
 		Assembler assembler = new Assembler(ec);
-		assembler.assemble();
+		ArrayList<String> objectProgram = assembler.assemble();
+		System.out.println(objectProgram);
 	}
-
 }

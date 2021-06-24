@@ -17,9 +17,11 @@ public class Assembler {
     this.code = code;
   }
 
-  public void assemble() {
+  public ArrayList<String> assemble() {
     passOne();
     passTwo();
+
+    return objectProgram;
   }
 
   private void passOne() {
