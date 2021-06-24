@@ -1,5 +1,7 @@
+package ASSEMBLER;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.io.File;
 
 public class Assembler {
 
@@ -12,10 +14,21 @@ public class Assembler {
 	private String whiteSpaceRegex = "[\\s,]+";
   private Optab OPTAB = new Optab();
   private ArrayList<String> objectProgram = new ArrayList<String>();
+  private ArrayList<ArrayList<String>> objectPrograms = new ArrayList<ArrayList<String>>();
+  private ArrayList<String> finalObjectCode = new ArrayList<String>();
 
-  public Assembler(String code) {
-    this.code = code;
-  }
+	public void handleInputFiles(File[] selectedFiles) {
+    for (File file : selectedFiles) {
+      Code c = new Code();
+      String strCode = c.readInputFile(file.getAbsolutePath());
+      MacroProcessor mc = new MacroProcessor(strCode);
+      code = mc.processCode();
+      objectPrograms.add(assemble());
+    }
+
+    Linker linker = new Linker(objectPrograms);
+    finalObjectCode = linker.linkCodes();
+	}
 
   public ArrayList<String> assemble() {
     passOne();
@@ -227,5 +240,9 @@ public class Assembler {
 
     objectCode += String.format("%04d", operandAddress);
     objectProgram.add(objectCode);
+  }
+
+  public ArrayList<String> getFinalObjectCode() {
+    return finalObjectCode;
   }
 }

@@ -1,3 +1,4 @@
+package ASSEMBLER;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -5,13 +6,9 @@ import java.util.Scanner;
 public class Code {
 	private String code = "";
 
-	public Code() {
-		readInputFile();
-	}
-
-	private void readInputFile() {
+	public String readInputFile(String filePath) {
 		try {
-			File inputFile = new File("./input.asm");
+			File inputFile = new File(filePath);
       Scanner reader = new Scanner(inputFile);
 
       while (reader.hasNextLine()) {
@@ -21,9 +18,7 @@ public class Code {
 		} catch(FileNotFoundException e) {
 			e.printStackTrace();
 		}
-	}
 
-	public String getCode() {
 		return code;
 	}
 }

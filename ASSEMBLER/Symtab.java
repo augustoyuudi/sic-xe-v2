@@ -1,3 +1,4 @@
+package ASSEMBLER;
 import java.util.HashMap;
 
 public class Symtab {
@@ -24,9 +25,5 @@ public class Symtab {
 
   public Boolean containsKey(String key) {
     return SYMTAB.containsKey(key);
-  }
-
-  public void printAll() {
-    SYMTAB.forEach((key, value) -> System.out.println(key + "-" + value));
   }
 }

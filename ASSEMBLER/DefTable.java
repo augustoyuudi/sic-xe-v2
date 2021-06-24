@@ -1,10 +1,11 @@
+package ASSEMBLER;
 import java.util.Map;
 import java.util.HashMap;
 
 public class DefTable {
-	
+
 	private Map<String, Macro> defMacros;
-	
+
 	public DefTable() {
 
 		defMacros = new HashMap<String, Macro>();
@@ -21,5 +22,5 @@ public class DefTable {
 	public Macro getMacro(String macroName) {
 		return defMacros.get(macroName);
 	}
-	
+
 }
