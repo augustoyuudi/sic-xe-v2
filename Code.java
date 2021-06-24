@@ -18,7 +18,6 @@ public class Code {
 				code += reader.nextLine() + "\n";
       }
 
-			// code = code.substring(0, code.length() - 1);
 		} catch(FileNotFoundException e) {
 			e.printStackTrace();
 		}
