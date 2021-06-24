@@ -1,8 +1,8 @@
 
 public class Code {
-	String t ="TESTE START	0	COMMENT\n"
+	String t ="TESTE START	0\n"
 			+ "TEST1 MACRO	&A,&B,&C\n"
-			+ "		 CLEAR	X	COMMENT\n"
+			+ "		 CLEAR	X\n"
 			+ "		 CLEAR	A\n"
 			+ "		 CLEAR	S\n"
 			+ "		 LDT	&A\n"
@@ -16,9 +16,13 @@ public class Code {
 			+ "		 SUB	&B\n"
 			+ "		 MEND\n"
 			+ "		 MEND\n"
+			+ "SYMBT WORD 03\n"
+			+ "LOL WORD 69\n"
+			+ "Y WORD 69\n"
+			+ "Z WORD 69\n"
+			+ "K WORD 69\n"
 			+ "MTEST1 TEST1 X Y Z\n"
 			+ "MTEST2 TEST2 K\n"
 			+ "MTEST3 TEST3 X\n"
 			+ "		 END";
-
 }

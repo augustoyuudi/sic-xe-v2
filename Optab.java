@@ -2,9 +2,15 @@ import java.util.HashMap;
 
 public class Optab {
 
-  public HashMap<String, Integer> OPTAB = new HashMap<String, Integer>();
+  private HashMap<String, Integer> OPTAB = new HashMap<String, Integer>();
+  private HashMap<String, Integer> OperationTypes = new HashMap<String, Integer>();
 
   public Optab() {
+    setOperationCodes();
+    setOperationTypes();
+  }
+
+  private void setOperationCodes() {
     OPTAB.put("ADD", 0x18);
     OPTAB.put("ADDR", 0x90);
     OPTAB.put("AND", 0x40);
@@ -43,5 +49,58 @@ public class Optab {
     OPTAB.put("SUBR", 0x94);
     OPTAB.put("TIX", 0x2C);
     OPTAB.put("TIXR", 0xB8);
+  }
+
+  private void setOperationTypes() {
+    OperationTypes.put("ADD", 3);
+    OperationTypes.put("ADDR", 2);
+    OperationTypes.put("AND", 3);
+    OperationTypes.put("CLEAR", 2);
+    OperationTypes.put("COMP", 3);
+    OperationTypes.put("COMPR", 2);
+    OperationTypes.put("DIV", 3);
+    OperationTypes.put("DIVR", 2);
+    OperationTypes.put("J", 3);
+    OperationTypes.put("JEQ", 3);
+    OperationTypes.put("JGT", 3);
+    OperationTypes.put("JLT", 3);
+    OperationTypes.put("JSUB", 3);
+    OperationTypes.put("LDA", 3);
+    OperationTypes.put("LDB", 3);
+    OperationTypes.put("LDC", 3);
+    OperationTypes.put("LDL", 3);
+    OperationTypes.put("LDS", 3);
+    OperationTypes.put("LDT", 3);
+    OperationTypes.put("LDX", 3);
+    OperationTypes.put("MUL", 3);
+    OperationTypes.put("MULR", 2);
+    OperationTypes.put("OR", 3);
+    OperationTypes.put("RMO", 2);
+    OperationTypes.put("RSUB", 3);
+    OperationTypes.put("SHIFTL", 2);
+    OperationTypes.put("SHIFTR", 2);
+    OperationTypes.put("STA", 3);
+    OperationTypes.put("STB", 3);
+    OperationTypes.put("STCH", 3);
+    OperationTypes.put("STL", 3);
+    OperationTypes.put("STS", 3);
+    OperationTypes.put("STT", 3);
+    OperationTypes.put("STX", 3);
+    OperationTypes.put("SUB", 3);
+    OperationTypes.put("SUBR", 2);
+    OperationTypes.put("TIX", 3);
+    OperationTypes.put("TIXR", 2);
+  }
+
+  public Integer get(String opcode) {
+    return OPTAB.get(opcode);
+  }
+
+  public Boolean containsKey(String opcode) {
+    return OPTAB.containsKey(opcode);
+  }
+
+  public Integer getOperationType(String opcode) {
+    return OperationTypes.get(opcode);
   }
 }

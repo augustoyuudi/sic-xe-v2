@@ -4,13 +4,13 @@ import java.util.ArrayList;
 public class Assembler {
 
   private Integer LOCCTR;
-  private HashMap<String, Integer> SYMTAB = new HashMap<String, Integer>();
+  private Symtab SYMTAB = new Symtab();
   private ArrayList<String> intermediateFile = new ArrayList<String>();
   private Integer startingAddress;
   private Integer programLength;
   private String code;
 	private String whiteSpaceRegex = "[\\s,]+";
-  private HashMap<String, Integer> OPTAB = new Optab().OPTAB;
+  private Optab OPTAB = new Optab();
   private ArrayList<String> objectProgram = new ArrayList<String>();
 
   public Assembler(String code) {
@@ -35,7 +35,7 @@ public class Assembler {
       if (opcode.equals("START")) {
         startingAddress = Integer.parseInt(operand);
         LOCCTR = Integer.parseInt(operand);
-        intermediateFile.add(lines[currentIndex]);
+        intermediateFile.add(lines[currentIndex].trim());
         currentIndex += 1;
       }
 
@@ -56,18 +56,16 @@ public class Assembler {
         continue;
       }
 
-      if (words.length == 3) {
+      if (words.length > 2) {
         String label = words[0];
+        opcode = words[1];
+
         if (SYMTAB.containsKey(label)) {
           System.out.println("duplicate symbol");
           return;
         }
+
         SYMTAB.put(label, LOCCTR);
-        intermediateFile.add(lines[currentIndex].trim());
-        currentIndex += 1;
-        words = lines[currentIndex].trim().split(whiteSpaceRegex);
-        opcode = words[0];
-        continue;
       }
 
       if (OPTAB.containsKey(opcode)) {
@@ -81,7 +79,6 @@ public class Assembler {
 
       if (opcode.equals("WORD")) {
         LOCCTR += 3;
-        intermediateFile.add(lines[currentIndex].trim());
         currentIndex += 1;
         words = lines[currentIndex].trim().split(whiteSpaceRegex);
         opcode = words[0];
@@ -118,19 +115,18 @@ public class Assembler {
         continue;
       }
 
-      System.out.println("invalid operation code");
+      // System.out.println("invalid operation code");
     }
 
     intermediateFile.add(lines[currentIndex].trim());
     programLength = LOCCTR - startingAddress;
-    // System.out.println(intermediateFile);
   }
 
   private void passTwo() {
     Integer currentIndex = 0;
     String[] words = intermediateFile.get(currentIndex).split(whiteSpaceRegex);
     String opcode = words[1];
-    String operand;
+    String operand = null;
     Integer operandAddress = 0;
     String objectCode;
 
@@ -163,29 +159,26 @@ public class Assembler {
       }
 
       if (OPTAB.containsKey(opcode)) {
-        if (words.length > 2) {
-          operandAddress = SYMTAB.get(opcode);
-
-          if (operandAddress == null) {
-            operandAddress = 0;
-            // set error flag (undeifned symbol)
-          }
+        if (OPTAB.getOperationType(opcode) == 2) {
+          handleInstruction2(opcode, operandAddress, words);
         }
-        Integer temp = OPTAB.get(opcode);
-        objectCode = Integer.toHexString(temp) + String.format("%04d", operandAddress);
+
+        if (OPTAB.getOperationType(opcode) == 3) {
+          handleInstruction3(opcode, words);
+        }
+
+        currentIndex += 1;
+        words = intermediateFile.get(currentIndex).split(whiteSpaceRegex);
+        opcode = words[0];
+        continue;
       }
 
       if (opcode.equals("BYTE") || opcode.equals("WORD")) {
+        // opcode = words[0];
         // convert constant to object code
       }
 
-      // if object code dont fit into the current text record
-        // write text record to object program
-        // initialize new text record
-
-
-      // add object code to text record
-      operandAddress = SYMTAB.get(opcode);
+      operandAddress = SYMTAB.get(operand);
       objectCode = OPTAB.get(opcode) + String.format("%04d", operandAddress);
       objectProgram.add(objectCode);
       currentIndex += 1;
@@ -195,8 +188,44 @@ public class Assembler {
 
     String endLine = "E" + String.format("%06X", startingAddress);
     objectProgram.add(endLine);
-    // write last text record to object program
 
     System.out.println(objectProgram);
+  }
+
+  private void handleInstruction2(String opcode, Integer operandAddress, String[] words) {
+    Integer temp = OPTAB.get(opcode);
+    String objectCode = Integer.toHexString(temp);
+    String register1 = String.valueOf(words[1].charAt(0));
+    String register2 = null;
+    Integer register1Address = SYMTAB.get(register1);
+    Integer register2Address = null;
+
+    if (words[1].length() == 2) {
+      register2 = String.valueOf(words[1].charAt(1));
+      register2Address = SYMTAB.get(register2);
+    }
+
+    if (register2 == null) {
+      objectCode += String.format("%-2s", register1Address + "").replace(' ', '0');
+    }
+
+    if (register2 != null) {
+      objectCode += register1Address + "" + register2Address;
+    }
+
+    objectProgram.add(objectCode);
+  }
+
+  private void handleInstruction3(String opcode, String[] words) {
+    String strOpcode = Integer.toHexString(OPTAB.get(opcode));
+    if (strOpcode.length() == 1) {
+      strOpcode += "0";
+    }
+    String objectCode = strOpcode;
+    String operand = words[1];
+    Integer operandAddress = SYMTAB.get(operand);
+
+    objectCode += String.format("%04d", operandAddress);
+    objectProgram.add(objectCode);
   }
 }
