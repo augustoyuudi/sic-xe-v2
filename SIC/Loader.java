@@ -3,38 +3,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.nio.ByteBuffer;
-
-		// JFileChooser jFileChooser = new JFileChooser();
-    // int result = jFileChooser.showOpenDialog(new JFrame());
-    // if (result == JFileChooser.APPROVE_OPTION) {
-    // 	File selectedFile = jFileChooser.getSelectedFile();
-    // 	sic.start(selectedFile.getAbsolutePath());
-    // 	updateReg(sic.getRegister());
-    // 	updateInstructionMemory(sic.getMemory().instructionMemoryToString());
-    // 	updateDataMemory(sic.getMemory().dataMemoryToString());
-    // 	updateCurrentInstruction(sic.getInstruction().getCurrentInstruction());
-    // }
+import java.util.ArrayList;
 
 public class Loader {
   Memory memory;
 
-  protected void start(Memory memory, String filePath) {
+  protected void start(Memory memory, ArrayList<String> objectCode) {
     this.memory = memory;
-    readInputFile(filePath);
-  }
-
-  protected void readInputFile(String filePath) {
-    try {
-      File inputFile = new File(filePath);
-      Scanner reader = new Scanner(inputFile);
-
-      while (reader.hasNextLine()) {
-        addToMemory(reader.nextLine());
-      }
-
-      reader.close();
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
+    for (String s : objectCode) {
+      addToMemory(s);
     }
   }
 
@@ -65,18 +42,18 @@ public class Loader {
     int l = instruction.length();
     if (l == 2) {
       splitInstruction = new String[1];
-      splitInstruction[0] = instruction;
+      splitInstruction[0] = instruction.toUpperCase();
     }
     if (l == 4) {
       splitInstruction = new String[2];
-      splitInstruction[0] = instruction.substring(0, 2);
-      splitInstruction[1] = instruction.substring(2, 4);
+      splitInstruction[0] = instruction.substring(0, 2).toUpperCase();
+      splitInstruction[1] = instruction.substring(2, 4).toUpperCase();
     }
     if (l > 4) {
       splitInstruction = new String[3];
-      splitInstruction[0] = instruction.substring(0, 2);
-      splitInstruction[1] = instruction.substring(2, 4);
-      splitInstruction[2] = instruction.substring(4);
+      splitInstruction[0] = instruction.substring(0, 2).toUpperCase();
+      splitInstruction[1] = instruction.substring(2, 4).toUpperCase();
+      splitInstruction[2] = instruction.substring(4).toUpperCase();
     }
 
     return splitInstruction;

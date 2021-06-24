@@ -5,6 +5,7 @@ import java.io.File;
 
 public class Assembler {
 
+  private Code c = new Code();
   private Integer LOCCTR;
   private Symtab SYMTAB = new Symtab();
   private ArrayList<String> intermediateFile = new ArrayList<String>();
@@ -15,11 +16,9 @@ public class Assembler {
   private Optab OPTAB = new Optab();
   private ArrayList<String> objectProgram = new ArrayList<String>();
   private ArrayList<ArrayList<String>> objectPrograms = new ArrayList<ArrayList<String>>();
-  private ArrayList<String> finalObjectCode = new ArrayList<String>();
 
-	public void handleInputFiles(File[] selectedFiles) {
+	public ArrayList<String> handleInputFiles(File[] selectedFiles) {
     for (File file : selectedFiles) {
-      Code c = new Code();
       String strCode = c.readInputFile(file.getAbsolutePath());
       MacroProcessor mc = new MacroProcessor(strCode);
       code = mc.processCode();
@@ -27,7 +26,7 @@ public class Assembler {
     }
 
     Linker linker = new Linker(objectPrograms);
-    finalObjectCode = linker.linkCodes();
+    return linker.linkCodes();
 	}
 
   public ArrayList<String> assemble() {
@@ -42,6 +41,7 @@ public class Assembler {
     Integer currentIndex = 0;
     String[] words = lines[currentIndex].split(whiteSpaceRegex);
     String opcode;
+    programLength = 0;
 
     if (words.length > 2) {
       opcode = words[1];
@@ -144,6 +144,7 @@ public class Assembler {
     String operand = null;
     Integer operandAddress = 0;
     String objectCode;
+    objectProgram.clear();
 
     if (words.length > 2) {
       operand = words[2];
@@ -240,9 +241,5 @@ public class Assembler {
 
     objectCode += String.format("%04d", operandAddress);
     objectProgram.add(objectCode);
-  }
-
-  public ArrayList<String> getFinalObjectCode() {
-    return finalObjectCode;
   }
 }

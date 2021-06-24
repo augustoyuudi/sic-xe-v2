@@ -1,7 +1,7 @@
 package GUI;
-import ASSEMBLER.Assembler;
 import SIC.SIC;
 import SIC.Register;
+import java.io.File;
 import javax.swing.JPanel;
 import java.awt.Color;
 import javax.swing.JLabel;
@@ -22,7 +22,6 @@ public class Panel extends JPanel {
 	 * Create the panel.
 	 */
 	SIC sic;
-	Assembler assembler;
 	JTextPane instructionMemoryText, dataMemoryText;
 	JTextArea textRegA, textRegX, textRegL, textRegB;
 	JTextArea textRegS, textRegT, textRegPC, textRegSW;
@@ -30,7 +29,6 @@ public class Panel extends JPanel {
 
 	public Panel() {
 		sic = new SIC();
-		assembler = new Assembler();
 
 		setForeground(Color.WHITE);
 		setBackground(new Color(169, 169, 169));
@@ -47,13 +45,16 @@ public class Panel extends JPanel {
 		btnLoad.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-
 				JFileChooser jFileChooser = new JFileChooser();
 				jFileChooser.setMultiSelectionEnabled(true);
 				int result = jFileChooser.showOpenDialog(new JFrame());
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File selectedFiles[] = jFileChooser.getSelectedFiles();
-					assembler.handleInputFiles(selectedFiles);
+					sic.assemble(selectedFiles);
+					updateReg(sic.getRegister());
+					updateInstructionMemory(sic.getMemory().instructionMemoryToString());
+					updateDataMemory(sic.getMemory().dataMemoryToString());
+					updateCurrentInstruction(sic.getInstruction().getCurrentInstruction());
 				}
 			}
 		});

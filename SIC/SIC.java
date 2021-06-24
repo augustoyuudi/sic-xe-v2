@@ -1,5 +1,7 @@
 package SIC;
+import ASSEMBLER.Assembler;
 import java.util.ArrayList;
+import java.io.File;
 
 public class SIC {
   private Register register;
@@ -7,16 +9,18 @@ public class SIC {
   private Loader loader;
   private Instruction instruction;
   private int instructionCounter;
+  private Assembler assembler;
 
   public SIC() {
     register = new Register();
     memory = new Memory();
     loader = new Loader();
     instruction = new Instruction();
+    assembler = new Assembler();
   }
 
-  public void start(String filePath) {
-    loader.start(memory, filePath);
+  public void start(ArrayList<String> objectCode) {
+    loader.start(memory, objectCode);
     register.start();
     instructionCounter = 0;
     memory.setNewData(10, 1024);
@@ -75,5 +79,10 @@ public class SIC {
 
   public Instruction getInstruction() {
     return instruction;
+  }
+
+  public void assemble(File[] selectedFiles) {
+    ArrayList<String> finalObjectCode = assembler.handleInputFiles(selectedFiles);
+    start(finalObjectCode);
   }
 }
