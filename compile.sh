@@ -1,2 +1,2 @@
 javac *.java
-java Teste
+java Main

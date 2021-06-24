@@ -1,11 +1,12 @@
 
 
-public class Teste {
+public class Main {
 
 	public static void main(String[] args) {
 
 		Code c = new Code();
-		MacroProcessor mc = new MacroProcessor(c.t);
+		// System.out.println(c.getCode());
+		MacroProcessor mc = new MacroProcessor(c.getCode());
 
 		String ec = mc.processCode();
 

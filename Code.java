@@ -1,28 +1,30 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class Code {
-	String t ="TESTE START	0\n"
-			+ "TEST1 MACRO	&A,&B,&C\n"
-			+ "		 CLEAR	X\n"
-			+ "		 CLEAR	A\n"
-			+ "		 CLEAR	S\n"
-			+ "		 LDT	&A\n"
-			+ "		 LDA    &B\n"
-			+ "		 LDC	&C\n"
-			+ "TEST2 MACRO  &A\n"
-			+ "		 ADD    &A\n"
-			+ "		 MEND\n"
-			+ "MTEST2 TEST2 LOL\n"
-			+ "TEST3 MACRO	&B\n"
-			+ "		 SUB	&B\n"
-			+ "		 MEND\n"
-			+ "		 MEND\n"
-			+ "SYMBT WORD 03\n"
-			+ "LOL WORD 69\n"
-			+ "Y WORD 69\n"
-			+ "Z WORD 69\n"
-			+ "K WORD 69\n"
-			+ "MTEST1 TEST1 X Y Z\n"
-			+ "MTEST2 TEST2 K\n"
-			+ "MTEST3 TEST3 X\n"
-			+ "		 END";
+	private String code = "";
+
+	public Code() {
+		readInputFile();
+	}
+
+	private void readInputFile() {
+		try {
+			File inputFile = new File("./input.asm");
+      Scanner reader = new Scanner(inputFile);
+
+      while (reader.hasNextLine()) {
+				code += reader.nextLine() + "\n";
+      }
+
+			// code = code.substring(0, code.length() - 1);
+		} catch(FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String getCode() {
+		return code;
+	}
 }

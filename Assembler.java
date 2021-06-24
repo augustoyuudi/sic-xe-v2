@@ -188,8 +188,6 @@ public class Assembler {
 
     String endLine = "E" + String.format("%06X", startingAddress);
     objectProgram.add(endLine);
-
-    System.out.println(objectProgram);
   }
 
   private void handleInstruction2(String opcode, Integer operandAddress, String[] words) {
